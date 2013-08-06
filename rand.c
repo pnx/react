@@ -18,19 +18,53 @@
  *   MA 02110-1301, USA.
  */
 #include "rand.h"
+#include <msp430.h>
 
-/* Best random function ever :) 
-   this takes up ALOT of space. */
+#define RTACCTL TACCTL0
+#define RTACCR  TACCR0
+
+/*
+ * True random number generator using hardware clocks (VLO and DCC)
+ *
+ * TI SLAA338 Algorithm: http://www.ti.com/sc/docs/psheets/abstract/apps/slaa338.htm
+ */
 int rand(void) {
 
-	int table[16] = {
-		0x7f6a, 0x086d, 0x9164, 0xe663,
-        	0x6b6b, 0x1c6c, 0x8565, 0xf262,
-        	0x6c06, 0x1b01, 0x8208, 0xf50f,
-        	0x65b0, 0x12b7, 0x8bbe, 0xfcb9
-	};
+	int i, j;
+	unsigned _ctl, _cctl, r = 0;
 
-	static unsigned char cnt = 0;
+	/* Save old Timer A control state. */
+	_ctl = TACTL;
+	_cctl = RTACCTL;
 
-	return table[(cnt++) % (sizeof(table) / sizeof(table[0]))];
+	RTACCTL = CAP | CM_1 | CCIS_1;	/* Capture mode */
+	TACTL 	= TASSEL_2 | MC_2; 	/* SMCLK (submain), continuous mode */
+
+	/* Fetch all 16 bits individually
+	   from hardware clock. */
+	for(i=0; i < 16; i++) {
+		unsigned char cnt = 0;
+
+		for(j=0; j < 5; j++) {
+
+			/* Wait for interrupt */
+			while(!(CCIFG & RTACCTL));
+
+			RTACCTL &= ~CCIFG;
+
+			if (RTACCR & 0x1)
+				cnt++;
+		}
+
+		/* Shift result and set MSB */
+		r >>= 0x1;
+		if (cnt > 2)
+			r |= 0x8000;
+	}
+
+	/* Restore state */
+	TACTL = _ctl;
+	RTACCTL = _cctl;
+
+	return r;
 }
