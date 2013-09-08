@@ -29,6 +29,9 @@ void sm_init() {
 	/* Disable watchdog */
 	WDTCTL = WDTPW + WDTHOLD;
 
+	/* Init random number generator */
+	srand(rand_seed());
+
 	/* Setup Timer interrupt */
 	CCTL0 = CCIE;
   	TACCR0 = 62500;
