@@ -21,7 +21,7 @@
 #include "rand.h"
 
 #define INIT_TIMEOUT 200
-#define MAX_CNT 150
+#define MAX_CNT 80
 #define MIN_CNT 20
 
 void sm_init() {
