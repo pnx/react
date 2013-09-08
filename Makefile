@@ -29,15 +29,13 @@ PROGRAMS = react.elf
 
 all : $(PROGRAMS)
 
+react.elf : main.o sm.o btn.o rand.o
+
 clean :
 	$(RM) *.o
 
 distclean : clean
 	$(RM) $(PROGRAMS)
-
-react.elf : main.o sm.o btn.o rand.o
-
-
 
 %.elf :
 	$(QUIET_LD)$(LD) $(LDFLAGS) -o $@ $^
