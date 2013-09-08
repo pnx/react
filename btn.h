@@ -1,4 +1,4 @@
-/*  sm.h
+/*  btn.h
  *
  *   Copyright (C) 2013       Henrik Hautakoski <henrik@fiktivkod.org>
  *
@@ -20,6 +20,8 @@
 #ifndef BTN_H
 #define BTN_H
 
+/* Check if the button is pressed.
+   Returns non zero if the button is pressed. zero otherwise. */
 int btn_pressed(void);
 
 /* Enable interrupt to catch the button press. */
