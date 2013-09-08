@@ -1,6 +1,9 @@
 /*  rand.c
  *
  *   Copyright (C) 2013       Henrik Hautakoski <henrik@fiktivkod.org>
+ *   
+ *   Psuedo-number-generator derived from glibc.
+ *   Copyright (C) 1995-2013 Free Software Foundation, Inc.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,6 +23,21 @@
 #include "rand.h"
 #include <msp430.h>
 
+/* Keep track of the psedo random state. */
+static int state = 0;
+
+void srand(unsigned int seed) {
+
+	state = seed;
+}
+
+int rand(void) {
+
+	/* LCG implementation derived from glibc's random_r.c */
+	state = (1103515245 * state) + 12345;
+	return state;
+}
+
 #define RTACCTL TACCTL0
 #define RTACCR  TACCR0
 
@@ -28,7 +46,7 @@
  *
  * TI SLAA338 Algorithm: http://www.ti.com/sc/docs/psheets/abstract/apps/slaa338.htm
  */
-int rand(void) {
+int rand_seed(void) {
 
 	int i, j;
 	unsigned _ctl, _cctl, _ccr, r = 0;

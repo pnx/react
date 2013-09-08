@@ -20,9 +20,15 @@
 #ifndef RAND_H
 #define RAND_H
 
-#define rand_interval(min, max) \
-    ((rand() % ((max) - (min)) + (max)));
+/* Generates a random seed.
+   Note that this function may use timers and interrupts. */
+int rand_seed(void);
+
+void srand(unsigned int seed);
 
 int rand(void);
+
+#define rand_interval(min, max) \
+    ((rand() % ((max) - (min)) + (max)));
 
 #endif /* RAND_H */
