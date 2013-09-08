@@ -31,11 +31,12 @@
 int rand(void) {
 
 	int i, j;
-	unsigned _ctl, _cctl, r = 0;
+	unsigned _ctl, _cctl, _ccr, r = 0;
 
 	/* Save old Timer A control state. */
 	_ctl = TACTL;
 	_cctl = RTACCTL;
+	_ccr = RTACCR;
 
 	RTACCTL = CAP | CM_1 | CCIS_1;	/* Capture mode */
 	TACTL 	= TASSEL_2 | MC_2; 	/* SMCLK (submain), continuous mode */
@@ -65,6 +66,7 @@ int rand(void) {
 	/* Restore state */
 	TACTL = _ctl;
 	RTACCTL = _cctl;
+	RTACCR = _ccr;
 
 	return r;
 }
