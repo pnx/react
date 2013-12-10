@@ -20,9 +20,8 @@
 #ifndef RAND_H
 #define RAND_H
 
-/* Generates a random seed.
-   Note that this function may use timers and interrupts. */
-int rand_seed(void);
+/* TI SLAA338 True RNG Algorithm  */
+int slaa338(void);
 
 void srand(unsigned int seed);
 

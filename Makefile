@@ -29,7 +29,7 @@ PROGRAMS = react.elf
 
 all : $(PROGRAMS)
 
-react.elf : main.o sm.o btn.o rand.o
+react.elf : main.o sm.o btn.o rand.o slaa338.o
 
 clean :
 	$(RM) *.o

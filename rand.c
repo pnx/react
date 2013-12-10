@@ -1,7 +1,7 @@
 /*  rand.c
  *
  *   Copyright (C) 2013       Henrik Hautakoski <henrik@fiktivkod.org>
- *   
+ *
  *   Psuedo-number-generator derived from glibc.
  *   Copyright (C) 1995-2013 Free Software Foundation, Inc.
  *
@@ -21,7 +21,6 @@
  *   MA 02110-1301, USA.
  */
 #include "rand.h"
-#include <msp430.h>
 
 /* Keep track of the psedo random state. */
 static int state = 0;
@@ -36,51 +35,4 @@ int rand(void) {
 	/* LCG implementation derived from glibc's random_r.c */
 	state = (1103515245 * state) + 12345;
 	return state;
-}
-
-#define RTACCTL TACCTL0
-#define RTACCR  TACCR0
-
-/*
- * True random number generator using hardware clocks (VLO and DCC)
- *
- * TI SLAA338 Algorithm: http://www.ti.com/sc/docs/psheets/abstract/apps/slaa338.htm
- */
-int rand_seed(void) {
-
-	int i, j;
-	unsigned _ctl, r = 0;
-
-	/* Save old Timer A control state. */
-	_ctl = TACTL;
-
-	RTACCTL = CAP | CM_1 | CCIS_1;	/* Capture mode */
-	TACTL 	= TASSEL_2 | MC_2; 	/* SMCLK (submain), continuous mode */
-
-	/* Fetch all 16 bits individually
-	   from hardware clock. */
-	for(i=0; i < 16; i++) {
-		unsigned char cnt = 0;
-
-		for(j=0; j < 5; j++) {
-
-			/* Wait for interrupt */
-			while(!(CCIFG & RTACCTL));
-
-			RTACCTL &= ~CCIFG;
-
-			if (RTACCR & 0x1)
-				cnt++;
-		}
-
-		/* Shift result and set MSB */
-		r >>= 0x1;
-		if (cnt > 2)
-			r |= 0x8000;
-	}
-
-	/* Restore state */
-	TACTL = _ctl;
-
-	return r;
 }

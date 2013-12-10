@@ -30,7 +30,7 @@ void sm_init() {
 	WDTCTL = WDTPW + WDTHOLD;
 
 	/* Init random number generator */
-	srand(rand_seed());
+	srand(slaa338());
 
 	/* Setup Timer interrupt */
 	CCTL0 = CCIE;
